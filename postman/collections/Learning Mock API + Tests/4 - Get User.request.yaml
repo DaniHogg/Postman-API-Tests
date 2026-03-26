@@ -1,0 +1,38 @@
+$kind: http-request
+name: '4 - Get User'
+method: GET
+url: '{{baseUrl}}/users/{{userId}}'
+order: 4000
+description: |-
+  Fetches a single user by id.
+  `{{userId}}` is populated automatically by the Create User script — no manual editing needed.
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // ─── 1. Status code ───────────────────────────────────────────────────────
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      // ─── 2. Correct user returned ─────────────────────────────────────────────
+      pm.test('Returned user id matches the requested id', function () {
+          const body = pm.response.json();
+          const expectedId = Number(pm.collectionVariables.get('userId'));
+          pm.expect(body.id).to.eql(expectedId);
+      });
+
+      // ─── 3. Required fields present ───────────────────────────────────────────
+      pm.test('User object has id, name, email, role, createdAt', function () {
+          const body = pm.response.json();
+          ['id', 'name', 'email', 'role', 'createdAt'].forEach(function (field) {
+              pm.expect(body, 'missing field: ' + field).to.have.property(field);
+          });
+      });
+
+      // ─── 4. Email format (simple check) ───────────────────────────────────────
+      pm.test('Email contains an @ symbol', function () {
+          const body = pm.response.json();
+          pm.expect(body.email).to.include('@');
+      });
+examples: './.resources/4 - Get User.resources/examples'

@@ -1,0 +1,38 @@
+$kind: http-request
+name: '7 - Get Deleted User (404)'
+method: GET
+url: '{{baseUrl}}/users/9999'
+order: 7000
+description: |-
+  **Negative test** — requests a user id that does not exist.
+  The API should return 404 Not Found with an error body.
+
+  This teaches you how to assert on error responses, not just happy-path ones.
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // ─── 1. Status code ───────────────────────────────────────────────────────
+      pm.test('Status code is 404 Not Found', function () {
+          pm.response.to.have.status(404);
+      });
+
+      // ─── 2. Error body shape ──────────────────────────────────────────────────
+      pm.test('Error body has "error" and "message" fields', function () {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('error');
+          pm.expect(body).to.have.property('message');
+      });
+
+      // ─── 3. Error value ───────────────────────────────────────────────────────
+      pm.test('"error" field is "Not Found"', function () {
+          const body = pm.response.json();
+          pm.expect(body.error).to.eql('Not Found');
+      });
+
+      // ─── 4. Message is a non-empty string ─────────────────────────────────────
+      pm.test('"message" is a non-empty string', function () {
+          const body = pm.response.json();
+          pm.expect(body.message).to.be.a('string').and.to.have.length.above(0);
+      });
+examples: './.resources/7 - Get Deleted User (404).resources/examples'

@@ -1,0 +1,59 @@
+$kind: http-request
+name: '3 - Create User'
+method: POST
+url: '{{baseUrl}}/users'
+order: 3000
+description: |-
+  Creates a new user and captures the returned `id` into the `userId` collection variable.
+  Subsequent requests (Get, Update, Delete) automatically use that captured id.
+
+  **Key learning:** The `afterResponse` script uses `pm.collectionVariables.set()` to store
+  the new user's id so you do not have to copy-paste it manually.
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Carol White",
+      "email": "carol@example.com",
+      "role": "user"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // ─── 1. Status code ───────────────────────────────────────────────────────
+      pm.test('Status code is 201 Created', function () {
+          pm.response.to.have.status(201);
+      });
+
+      // ─── 2. Body has an id ────────────────────────────────────────────────────
+      pm.test('Response contains an id', function () {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('id');
+          pm.expect(body.id).to.be.a('number');
+      });
+
+      // ─── 3. Echoes back the submitted fields ──────────────────────────────────
+      pm.test('Response echoes name and email', function () {
+          const body = pm.response.json();
+          pm.expect(body.name).to.eql('Carol White');
+          pm.expect(body.email).to.eql('carol@example.com');
+      });
+
+      // ─── 4. Location header ───────────────────────────────────────────────────
+      pm.test('Location header is present', function () {
+          pm.response.to.have.header('Location');
+      });
+
+      // ─── 5. Capture id for later requests ────────────────────────────────────
+      // This is the key automation step: we save the new user's id so that
+      // requests 4, 5, and 6 can use {{userId}} without any manual copy-paste.
+      const body = pm.response.json();
+      if (body && body.id) {
+          pm.collectionVariables.set('userId', body.id);
+          console.log('Captured userId:', body.id);
+      }
+examples: './.resources/3 - Create User.resources/examples'

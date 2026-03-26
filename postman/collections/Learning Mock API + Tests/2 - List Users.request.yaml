@@ -1,0 +1,57 @@
+$kind: http-request
+name: '2 - List Users'
+method: GET
+url: '{{baseUrl}}/users'
+order: 2000
+description: |-
+  Returns an array of all users.
+  Demonstrates how to assert on arrays and check that each item has the expected shape.
+queryParams:
+  - key: page
+    value: '1'
+    description: 'Page number (pagination). Disabled by default — enable to test.'
+    disabled: true
+  - key: limit
+    value: '10'
+    description: 'Number of results per page. Disabled by default — enable to test.'
+    disabled: true
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // ─── 1. Status code ───────────────────────────────────────────────────────
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      // ─── 2. Body is an array ──────────────────────────────────────────────────
+      pm.test('Response body is an array', function () {
+          const body = pm.response.json();
+          pm.expect(body).to.be.an('array');
+      });
+
+      // ─── 3. Array is not empty ────────────────────────────────────────────────
+      pm.test('Array contains at least one user', function () {
+          const body = pm.response.json();
+          pm.expect(body.length).to.be.above(0);
+      });
+
+      // ─── 4. Each item has required fields ─────────────────────────────────────
+      pm.test('Each user has id, name, and email', function () {
+          const body = pm.response.json();
+          body.forEach(function (user) {
+              pm.expect(user).to.have.property('id');
+              pm.expect(user).to.have.property('name');
+              pm.expect(user).to.have.property('email');
+          });
+      });
+
+      // ─── 5. Field types ───────────────────────────────────────────────────────
+      pm.test('User id is a number and name/email are strings', function () {
+          const body = pm.response.json();
+          const first = body[0];
+          pm.expect(first.id).to.be.a('number');
+          pm.expect(first.name).to.be.a('string');
+          pm.expect(first.email).to.be.a('string');
+      });
+examples: './.resources/2 - List Users.resources/examples'

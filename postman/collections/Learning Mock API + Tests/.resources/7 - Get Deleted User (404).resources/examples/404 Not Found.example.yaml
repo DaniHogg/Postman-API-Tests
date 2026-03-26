@@ -1,0 +1,18 @@
+$kind: http-example
+name: '404 Not Found'
+request:
+  url: '{{baseUrl}}/users/9999'
+  method: GET
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    - key: Content-Type
+      value: 'application/json; charset=utf-8'
+  body:
+    type: json
+    content: |-
+      {
+        "error": "Not Found",
+        "message": "User with id 9999 does not exist."
+      }

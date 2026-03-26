@@ -1,0 +1,51 @@
+$kind: http-request
+name: '5 - Update User'
+method: PUT
+url: '{{baseUrl}}/users/{{userId}}'
+order: 5000
+description: |-
+  Replaces the user record with new data (full update via PUT).
+  Demonstrates asserting that the response reflects the changes you sent.
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Carol White-Updated",
+      "email": "carol.updated@example.com",
+      "role": "admin"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // ─── 1. Status code ───────────────────────────────────────────────────────
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      // ─── 2. Updated fields are reflected ──────────────────────────────────────
+      pm.test('Name was updated', function () {
+          const body = pm.response.json();
+          pm.expect(body.name).to.eql('Carol White-Updated');
+      });
+
+      pm.test('Email was updated', function () {
+          const body = pm.response.json();
+          pm.expect(body.email).to.eql('carol.updated@example.com');
+      });
+
+      pm.test('Role was updated to admin', function () {
+          const body = pm.response.json();
+          pm.expect(body.role).to.eql('admin');
+      });
+
+      // ─── 3. Id has not changed ────────────────────────────────────────────────
+      pm.test('User id is unchanged after update', function () {
+          const body = pm.response.json();
+          const expectedId = Number(pm.collectionVariables.get('userId'));
+          pm.expect(body.id).to.eql(expectedId);
+      });
+examples: './.resources/5 - Update User.resources/examples'

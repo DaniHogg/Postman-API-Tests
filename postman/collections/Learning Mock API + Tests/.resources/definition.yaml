@@ -1,0 +1,29 @@
+$kind: collection
+name: Learning Mock API + Tests
+description: |-
+  A beginner-friendly collection that demonstrates a full CRUD workflow against a mock API.
+
+  ## What you will learn
+  - How to use {{baseUrl}} and collection variables
+  - How to write pm.test assertions (status codes, headers, JSON schema checks)
+  - How to capture a value from one response and reuse it in later requests
+  - How to test error cases (404 Not Found, 400 Bad Request)
+
+  ## Workflow order
+  1. Health Check
+  2. List Users
+  3. Create User  ← captures `userId` into a collection variable
+  4. Get User
+  5. Update User
+  6. Delete User
+  7. Get Deleted User (404 negative test)
+  8. Create User – Validation Error (400 negative test)
+
+  Run the requests top-to-bottom in the Collection Runner to see the full workflow.
+variables:
+  - key: baseUrl
+    value: 'https://example.mock.pstmn.io'
+    description: 'Base URL of the mock server. Override this in your environment.'
+  - key: userId
+    value: ''
+    description: 'Captured automatically from the Create User response.'

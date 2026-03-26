@@ -1,0 +1,23 @@
+$kind: http-example
+name: '201 Created'
+request:
+  url: '{{baseUrl}}/users'
+  method: POST
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    - key: Content-Type
+      value: 'application/json; charset=utf-8'
+    - key: Location
+      value: /users/3
+  body:
+    type: json
+    content: |-
+      {
+        "id": 3,
+        "name": "Carol White",
+        "email": "carol@example.com",
+        "role": "user",
+        "createdAt": "2024-01-15T10:05:00Z"
+      }

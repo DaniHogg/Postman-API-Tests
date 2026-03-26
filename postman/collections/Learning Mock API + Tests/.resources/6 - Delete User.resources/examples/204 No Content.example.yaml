@@ -1,0 +1,14 @@
+$kind: http-example
+name: '204 No Content'
+request:
+  url: '{{baseUrl}}/users/3'
+  method: DELETE
+response:
+  statusCode: 204
+  statusText: No Content
+  headers:
+    - key: Content-Type
+      value: 'application/json; charset=utf-8'
+  body:
+    type: text
+    content: ''

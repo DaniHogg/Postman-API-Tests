@@ -1,0 +1,54 @@
+$kind: http-request
+name: '8 - Create User - Validation Error (400)'
+method: POST
+url: '{{baseUrl}}/users'
+order: 8000
+description: |-
+  **Negative test** — sends an intentionally invalid payload (missing required `email` field).
+  The API should return 400 Bad Request with a descriptive validation error.
+
+  This teaches you how to verify that your API rejects bad input gracefully.
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": ""
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // ─── 1. Status code ───────────────────────────────────────────────────────
+      pm.test('Status code is 400 Bad Request', function () {
+          pm.response.to.have.status(400);
+      });
+
+      // ─── 2. Error body shape ──────────────────────────────────────────────────
+      pm.test('Error body has "error" and "details" fields', function () {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property('error');
+          pm.expect(body).to.have.property('details');
+      });
+
+      // ─── 3. Error value ───────────────────────────────────────────────────────
+      pm.test('"error" field is "Bad Request"', function () {
+          const body = pm.response.json();
+          pm.expect(body.error).to.eql('Bad Request');
+      });
+
+      // ─── 4. Details is an array of validation messages ────────────────────────
+      pm.test('"details" is a non-empty array', function () {
+          const body = pm.response.json();
+          pm.expect(body.details).to.be.an('array').and.to.have.length.above(0);
+      });
+
+      // ─── 5. Validation mentions the missing field ─────────────────────────────
+      pm.test('Validation error mentions "email"', function () {
+          const body = pm.response.json();
+          const allMessages = body.details.join(' ').toLowerCase();
+          pm.expect(allMessages).to.include('email');
+      });
+examples: './.resources/8 - Create User - Validation Error (400).resources/examples'

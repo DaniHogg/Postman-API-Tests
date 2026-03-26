@@ -1,0 +1,28 @@
+$kind: http-request
+name: '6 - Delete User'
+method: DELETE
+url: '{{baseUrl}}/users/{{userId}}'
+order: 6000
+description: |-
+  Deletes the user created in request 3.
+  A successful delete returns 204 No Content — there is no response body to parse.
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      // ─── 1. Status code ───────────────────────────────────────────────────────
+      pm.test('Status code is 204 No Content', function () {
+          pm.response.to.have.status(204);
+      });
+
+      // ─── 2. Body is empty ─────────────────────────────────────────────────────
+      // A 204 response must not contain a body.
+      pm.test('Response body is empty', function () {
+          pm.expect(pm.response.text()).to.eql('');
+      });
+
+      // ─── 3. Clean up the collection variable ──────────────────────────────────
+      // Good practice: clear the variable once we no longer need it.
+      pm.collectionVariables.set('userId', '');
+      console.log('userId collection variable cleared after delete.');
+examples: './.resources/6 - Delete User.resources/examples'

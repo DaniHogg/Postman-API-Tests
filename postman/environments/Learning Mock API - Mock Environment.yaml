@@ -1,0 +1,12 @@
+name: Learning Mock API - Mock Environment
+values:
+  - key: baseUrl
+    value: 'https://example.mock.pstmn.io'
+    enabled: true
+    type: default
+    description: 'Mock server base URL. Replace this with your actual Postman mock server URL after creating a mock.'
+  - key: userId
+    value: ''
+    enabled: true
+    type: default
+    description: 'Auto-populated by the Create User request script. Leave blank — do not edit manually.'
