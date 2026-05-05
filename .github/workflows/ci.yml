@@ -4,9 +4,9 @@ on:
   push:
     branches: [master]
   pull_request:
-      schedule:
-        - cron: "0 7 * * *"
     branches: [master]
+  schedule:
+    - cron: "0 7 * * *"
 
 jobs:
   newman:
