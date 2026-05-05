@@ -54,4 +54,9 @@ scripts:
           pm.expect(first.name).to.be.a('string');
           pm.expect(first.email).to.be.a('string');
       });
+
+      // ─── 6. Response time ─────────────────────────────────────────────────────
+      pm.test('Response time is under 2000 ms', function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
 examples: './.resources/2 - List Users.resources/examples'

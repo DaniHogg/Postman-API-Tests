@@ -23,7 +23,7 @@ description: |-
 variables:
   - key: baseUrl
     value: 'https://example.mock.pstmn.io'
-    description: 'Base URL of the mock server. Override this in your environment.'
+    description: 'Base URL of the mock server. Override this in your environment before running.'
   - key: userId
     value: ''
     description: 'Captured automatically from the Create User response.'

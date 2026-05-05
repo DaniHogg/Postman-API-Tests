@@ -1,91 +1,79 @@
-# ✅ README — `Postman-API-Tests`
-
-> **Tone:** Purposeful, concise, demand‑driven  
-> **Goal:** “Yes, I understand practical API testing.”
-
----
-
-```markdown
 # Postman API Tests
 
-A collection of **API tests built in Postman**, created to demonstrate practical API testing skills that are commonly expected in QA roles.
+Postman-based API test showcase focused on practical request validation, response assertions, and workflow-driven testing.
 
-This repository is intentionally lightweight and focused on **test logic and coverage**, not framework abstraction.
+This repository is intentionally lightweight and complements the Python automation projects by demonstrating how API testing is done in Postman day to day.
 
----
+## Purpose
 
-## 🎯 Purpose of This Repository
+This project demonstrates:
+- Request-level test design with Postman scripts
+- Positive and negative API test coverage
+- Reusable variables across a multi-step CRUD flow
+- Clear, reviewer-friendly test intent in each request file
 
-This repo exists to show:
-- How I design API tests using Postman’s scripting capabilities
-- How I validate responses beyond basic status codes
-- How I structure collections for clarity and reuse
+## Scope and Test Workflow
 
-This complements my Python‑based API testing shown in `qa-automation-template` by demonstrating tooling that many teams actively use day‑to‑day.
+Collection: `Learning Mock API + Tests`
 
----
+The suite is a mock API workflow designed to run in order:
+1. Health check
+2. List users
+3. Create user (captures `userId`)
+4. Get user
+5. Update user
+6. Delete user
+7. Get deleted user (404 negative test)
+8. Create user validation error (400 negative test)
 
-## 🧪 What’s Included
+Each request is kept in its own file under `postman/collections/.../*.request.yaml` for clarity and maintainability.
 
-- Postman collections containing:
-  - Status code validation
-  - Response body assertions
-  - Basic schema and field checks
-  - Response time checks
-- Use of:
-  - JavaScript test scripts
-  - Collection‑level and request‑level tests
+## API Target
 
----
+Default collection target is a Postman-style mock API base URL:
+- `https://example.mock.pstmn.io`
 
-## 🌐 API Under Test
+Before running, replace `baseUrl` in your environment with your real mock server URL if needed.
 
-Public API used for testing:
-- `https://jsonplaceholder.typicode.com`
+## How to Run
 
-Used because it supports:
-- CRUD operations
-- Nested resources
-- Predictable responses ideal for test demonstration
+### In Postman
+1. Open the repository in Postman Local View or import the collection from `postman/collections/Learning Mock API + Tests`.
+2. Select `postman/environments/Learning Mock API - Mock Environment.yaml`.
+3. Set `baseUrl` for your target mock server.
+4. Run the collection in Collection Runner from top to bottom.
 
----
+### With Newman
+If you export the collection/environment to JSON, run with Newman:
 
-## ✅ Example Test Assertions
+```bash
+newman run collection.json -e environment.json
+```
 
-- Response status is correct (200 / 201 / 404)
-- Expected properties exist in the response body
-- Response contains valid data types
-- Response time remains within acceptable limits
+## What This Repo Shows
 
----
+- Status and header validation
+- Response body field/type assertions
+- Response time checks
+- Variable capture and reuse (`userId`)
+- Negative test handling for `404` and `400`
 
-## 📁 Repository Structure
+## Repository Structure
 
-
+```text
 Postman-API-Tests/
-└── postman/
-└── collections/
-└── *.json
+├── postman/
+│   ├── collections/
+│   │   └── Learning Mock API + Tests/
+│   │       ├── 1 - Health Check.request.yaml
+│   │       ├── ...
+│   │       └── 8 - Create User - Validation Error (400).request.yaml
+│   ├── environments/
+│   │   └── Learning Mock API - Mock Environment.yaml
+│   └── globals/
+└── README.md
+```
 
-Collections can be:
-- Imported directly into Postman
-- Executed via Collection Runner
-- Used with Newman if required
+## Related Automation Work
 
----
-
-## 🧭 Why Postman (Alongside Python API Tests)
-
-Many teams:
-- Prototype in Postman
-- Share collections across QA / Dev / BA roles
-- Use Postman for exploratory and contract testing
-
-This repo shows I’m comfortable operating in that space, not just writing code.
-
----
-
-## 🔗 Related Automation Work
-
-For a production‑style API automation framework using Python and pytest, see:
-**qa-automation-template**
+For production-style API automation using Python + pytest, see `qa-automation-template`.

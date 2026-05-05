@@ -1,0 +1,56 @@
+name: Postman API Tests CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  newman:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman collection against Render API
+        run: |
+          newman run \
+            "postman/collections/Render Portfolio API Tests.postman_collection.json" \
+            -e "postman/environments/Render API Environment.postman_environment.json" \
+            --reporters cli,json \
+            --reporter-json-export newman-report.json
+
+      - name: Upload Newman JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-json
+          path: newman-report.json
+
+      - name: Notify live site
+        if: always() && github.event_name == 'push' && secrets.LIVE_SITE_TOKEN != ''
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.LIVE_SITE_TOKEN }}
+          repository: DaniHogg/qa-portfolio-livesite
+          event-type: portfolio-results-ready
+          client-payload: |
+            {
+              "source_repo": "${{ github.repository }}",
+              "source_workflow": "ci.yml",
+              "source_run_id": "${{ github.run_id }}",
+              "source_run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "source_branch": "${{ github.ref_name }}",
+              "source_commit_sha": "${{ github.sha }}",
+              "source_artifact": "postman-json"
+            }
